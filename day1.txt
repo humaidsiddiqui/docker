@@ -1,0 +1,11 @@
+DOCKER RUN:
+docker run commands is used to run a container from an image
+running a docker run -nginx command will run the instances of nginx application on docker host
+if the imd is not present in host it will go docker hub and pull it from there
+
+DOCKER PS:
+The Docker ps command lists all running containers and some basic information about them such asthe container I.D. the name of the image we used to run the containers.
+
+
+
+
