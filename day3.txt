@@ -1,0 +1,7 @@
+DOCKER PULL:
+lets pull docker mysql image from the hub
+after pulling the image you need to to set -e (environment) and password to login into the mysql server
+docker run -e MYSQL_ROOT_PASSWORD=root mysql
+after running this command the terminal screen will get blocked 
+SO it's always suggested to run the images in detached mode (background)
+
