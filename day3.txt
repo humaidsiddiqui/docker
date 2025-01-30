@@ -1,72 +1,70 @@
-DOCKER PULL:
-lets pull docker mysql image from the hub
-after pulling the image you need to to set -e (environment) and password to login into the mysql server
-docker run -e MYSQL_ROOT_PASSWORD=root mysql
-after running this command the terminal screen will get blocked 
-SO it's always suggested to run the images in detached mode (background)
-to run the docker in background run with -d 
-which will run the container in background 
+DOCKER VOLUMES:
+If One Container contains data and if it gets deleted, the whole data will be deleted
+because of this reason docker volumes comes into picture
+the container data needs to be bind with host data (-v docker volumes) 
+docker volume create mysql (this will create the volume and this need to be included in the previous command)
 
+docker run -d --name mysql --network two-tier -v var/lib/mysql-e MYSQL_ROOT_PASSWORD:root -e MYSQL_DATABASE=devops mysql
 
-the docker has its own lifecycle 
+DOCKER COMPOSE
+this help in automating the work by using YAML (YET ANOTHER MARKUP LANGUAGE)
+LET'S MAKE THE YAML FILE FOR AUTOMATION FROM SCRATCH:
 
-deleting a file in linux 
-rm -v dockerfile(verbose which shows how its getting deleted)
-what should an image should contains:application code,libraries, the OS information, frameworks, pakages and tools
-to pull images you type FROM
+version: "3.8"
 
-FROM OPENJDK:17-jdk-alpine (NAME OF THE IMAGE)(TAG OF THE IMAGE)
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: devops
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./message.sql:/docker-entrypoint-initdb.d/message.sql  
+    networks:
+      - twotier
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
 
-you will get the environment of java from it
-then you need to make the working directory where your source code will stored.
+  flask-app:
+    build:
+      context: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DB: devops
+    depends_on:
+      - mysql
+    networks:
+      - twotier
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-WORKDIR /app (making app folder in the container)
+networks:
+  twotier:
 
-COPY src/Main.java /app/Main.java (copy all the sourcecode from host to the container)
-(copy run from are all the syntax of docker files)
+installing docker compose 
+sudo apt-get install docker-compose-v2
+running the docker compose file
+docker compose up 
 
-RUN javac Main.java
-(this will compile the image)
+docker system prune will delete all the local conatiner which are not being used
 
-CMD["java","Main"]
-(This will run the image) 
-and also execute the image as well  
-ENTRYPOINT also serve the same purspose but cmd can be overwritten by docker run command but ENTRYPOINT Won't
-
-every line in the docker image are layers to run a application (steps or instructions)
-now after making the file we need build the image of it but this command (dockerfile->docker image->docker container)
-docker build javaapp . (the dot refers to the context)
-docker images (to check whther the image is build or not)
- whenever the host program makes changes. then you need to update the image as well
-
-when working on port you need to bind the port of host os to your daemon docker engine port
-by -p(publish)
--p 80:80    
-docker attach will show the real time interaction 
-
-docker exec -it 31ee3f2223ca bash (this command will lets you enter the mysql server, it means interactive terminal and bash refers to scripting)
-
-the docker -itd will make you container run forever
-
-
-DOCKER NETWORK
-docker container are basically isolated from each other. if two needed to communicated with each other we uses docker networking   
-There are 7 types of docker networking
-1. host
-2. Brdige
-3. User Defined Brdige(custom)
-4.None
-5.MACVLAN(docker swarn) (run multiple docker from different computers at the same time like clusters)
-6.IPVLAN
-7.OVERLAY
-
-
-docker run -d -p 5000:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest (FLASK COMMAND)
-docker run -d --name mysql --network two-tier -e MYSQL_ROOT_PASSWORD:root -e MYSQL_DATABASE=devops mysql (MYSQL COMMAND) 
-MAKE SURE THE NETWORK NAME FOR MY MYSQL AND FLASK APP REMAINS SAME TO ABLE TO INTERACT WITH EACH other
-
-
-
-
-
-
+DOCKER REGISTRY:
+If you want to push the images to the repository or hub you need to tag and then needed to push
