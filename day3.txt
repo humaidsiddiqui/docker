@@ -4,4 +4,50 @@ after pulling the image you need to to set -e (environment) and password to logi
 docker run -e MYSQL_ROOT_PASSWORD=root mysql
 after running this command the terminal screen will get blocked 
 SO it's always suggested to run the images in detached mode (background)
+to run the docker in background run with -d 
+which will run the container in background 
+
+
+the docker has its own lifecycle 
+
+deleting a file in linux 
+rm -v dockerfile(verbose which shows how its getting deleted)
+what should an image should contains:application code,libraries, the OS information, frameworks, pakages and tools
+to pull images you type FROM
+
+FROM OPENJDK:17-jdk-alpine (NAME OF THE IMAGE)(TAG OF THE IMAGE)
+
+you will get the environment of java from it
+then you need to make the working directory where your source code will stored.
+
+WORKDIR /app (making app folder in the container)
+
+COPY src/Main.java /app/Main.java (copy all the sourcecode from host to the container)
+(copy run from are all the syntax of docker files)
+
+RUN javac Main.java
+(this will compile the image)
+
+CMD["java","Main"]
+(This will run the image) 
+and also execute the image as well  
+ENTRYPOINT also serve the same purspose but cmd can be overwritten by docker run command but ENTRYPOINT Won't
+
+every line in the docker image are layers to run a application (steps or instructions)
+now after making the file we need build the image of it but this command (dockerfile->docker image->docker container)
+docker build javaapp . (the dot refers to the context)
+docker images (to check whther the image is build or not)
+ whenever the host program makes changes. then you need to update the image as well
+ 
+
+
+
+
+
+
+
+
+
+
+
 
