@@ -6,6 +6,14 @@ if the imd is not present in host it will go docker hub and pull it from there
 DOCKER PS:
 The Docker ps command lists all running containers and some basic information about them such asthe container I.D. the name of the image we used to run the containers.
 
+DOCKER IMAGES:
+the docker images command will show the images.
+image is the blueprint of steps that are included to run the program
+docker file consists of instructions which can make an image and you can replicate that image to others
+image contains application source code and container is made from it
+you can pull the images from others
 
-
+DOCKER PULL:
+you can pull images from docker hub by entering user credentials and logging into your account. this will pull your image to your CLI of docker
+docker pull nginx
 

@@ -1,0 +1,38 @@
+MULTI -STAGE DOCKER BUILD:
+Multi-stage docker build divide the images in stages
+not everytime but some we can work with multi-staging
+The base image are usually used to download libraries of the project, not to run the project.
+
+
+DOCKER FILE
+
+FROM python:3.7 AS builder (FROM is a stage) (AS (alias) giving a nickname)
+
+WORKDIR /app
+
+COPY Requirment.txt
+
+RUN pip install -r Requirment.txt
+ (till here the stage 1 where only your libraries are builded)
+ (stopping bulding stage and starting a new smaller builder stage)
+#-----
+(FROM HERE WE USE)
+#stage 2 base image 400mb
+FROM python:3.7-slim
+
+WORKDIR /app
+
+COPY --from=builder /usr/local/lib/python3.7/sites=packages/ /usr/local/python3.7/site-packages/ (COPYING THE ALREADY DOWNLOADED PACKAGES FROM BUILDER )
+
+COPY . . (AND ALSO COPYING THE CODE FROM THE HOT MACHINE)
+
+ENTRYPOINT ["python","run.py"]
+
+in simple word you are using just the stage 1 downloaded packages in your stage 2 for less memory size
+
+docker build -t flask-app-mini . (new image name)
+
+Montionring and loggin in Docker
+you can all the logs (EX:HTTP requests from brower) in a file
+nohup will run th app in background and store the output logs in a file
+nohup docker 3425252 & (container id)

@@ -69,3 +69,13 @@ docker system prune will delete all the local conatiner which are not being used
 DOCKER REGISTRY:
 If you want to push the images to the repository or hub you need to tag and then needed to push
 docker image tag two-tier-flask-app:latest humaidsiddiqui/two-tier-backend:latest (You need to assign new name and icnlude your docker username to push to docker hub)
+now in the yaml file don't build the image insert image:humaidsiddiqui/two-tier-backend
+docker compose down
+docker compose up 
+
+
+
+
+
+
+
